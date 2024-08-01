@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import test.firebase.member.Member;
 import test.firebase.member.MemberRepository;
 
+import java.util.Optional;
 import java.util.concurrent.locks.ReentrantLock;
 
 @Slf4j
@@ -22,28 +23,42 @@ public class AuthService {
 
     private final MemberRepository memberRepository;
 
-//    @Autowired
-//    private AuthService self;
-
-//    @Transactional
-//    public Member joinAndLogin(FirebaseToken decodedToken) {
-//        return self.internalJoinAndLogin(decodedToken);
-//    }
-
     private final ReentrantLock lock = new ReentrantLock();
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    public Member joinAndLogin(FirebaseToken decodedToken) {
+    public Member joinAndLogin(FirebaseToken decodedToken) throws InterruptedException {
         lock.lock();
         String uid = decodedToken.getUid();
-        Member member = memberRepository.findByUid(uid)
-                .orElseGet(Member.builder()
-                        .username(decodedToken.getName())
-                        .email(decodedToken.getEmail())
-                        .uid(uid)::build);
-        memberRepository.save(member);
-        lock.unlock();
-        return member;
+        Thread.sleep(1000);
+        Optional<Member> memberOptional = memberRepository.findByUid(uid);
+
+        if (memberOptional.isPresent()) {
+            log.info("이미 가입된 회원입니다.");
+            Member member = memberOptional.get();
+            lock.unlock();
+            return member;
+        } else {
+            log.info("새로운 회원입니다.");
+            Member newMember = Member.builder()
+                    .username(decodedToken.getName())
+                    .email(decodedToken.getEmail())
+                    .uid(uid)
+                    .build();
+            Member member = memberRepository.save(newMember);
+            lock.unlock();
+            return member;
+        }
     }
+
+
+//        Member member = memberRepository.findByUid(uid)
+//                .orElseGet(Member.builder()
+//                        .username(decodedToken.getName())
+//                        .email(decodedToken.getEmail())
+//                        .uid(uid)::build);
+//        memberRepository.save(member);
+//        lock.unlock();
+//        return member;
+
 }
