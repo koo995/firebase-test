@@ -12,7 +12,6 @@ public class PostService {
     private final PostRepository postRepository;
 
     public Post createPost(Post post, Member member) {
-        log.info("post: {}", post);
         post.setMember(member);
         return postRepository.save(post);
     }

@@ -25,7 +25,6 @@ public class AuthService {
                         .username(decodedToken.getName())
                         .email(decodedToken.getEmail())
                         .uid(uid)::build);
-        log.info("member: {}", member);
         memberRepository.save(member);
         return member;
     }
