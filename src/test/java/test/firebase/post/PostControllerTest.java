@@ -22,6 +22,9 @@ import test.firebase.auth.SignInResponse;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.concurrent.CountDownLatch;
 
@@ -98,6 +101,22 @@ class PostControllerTest {
         post.setContent("This is a test post.");
 
         CountDownLatch latch = new CountDownLatch(2);
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(new URI("http://localhost:8080/post/new"))
+                .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(post)))
+                .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + idToken)
+                .build();
+
+
+        Runnable task2 = () -> {
+            try(HttpClient client = HttpClient.newBuilder().build()) {
+                client.send(request, HttpResponse.BodyHandlers.ofString()).body();
+            } catch (InterruptedException | IOException e) {
+                throw new RuntimeException(e);
+            }
+        };
 
         // when
         Runnable task = () -> {

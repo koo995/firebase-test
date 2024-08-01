@@ -13,13 +13,16 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
+    open-in-view: true
 logging:
   level:
     org:
       springframework:
         transaction:
           interceptor: TRACE
-
+        orm:
+          jpa:
+            JpaTransactionManager: DEBUG
 firebase:
   credential:
     resource-path: firebase.json

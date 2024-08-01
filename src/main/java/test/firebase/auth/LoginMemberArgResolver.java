@@ -33,7 +33,7 @@ public class LoginMemberArgResolver implements HandlerMethodArgumentResolver {
         log.info("resolveArgument 실행");
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
         FirebaseToken decodedToken = (FirebaseToken) request.getAttribute("decodedToken");
-        return authService.JoinAndLogin(decodedToken);
+        return authService.joinAndLogin(decodedToken);
     }
 }
 
