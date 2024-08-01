@@ -11,7 +11,6 @@ import test.firebase.member.MemberRepository;
 
 @Slf4j
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 @Service
 public class AuthService {
 
@@ -28,5 +27,4 @@ public class AuthService {
         memberRepository.save(member);
         return member;
     }
-
 }

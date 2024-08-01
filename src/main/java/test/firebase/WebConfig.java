@@ -17,8 +17,8 @@ import java.util.List;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-//    private final AuthService authService;
-    private final MemberRepository memberRepository;
+    private final AuthService authService;
+//    private final MemberRepository memberRepository;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -30,6 +30,6 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(new LoginMemberArgResolver(memberRepository));
+        resolvers.add(new LoginMemberArgResolver(authService));
     }
 }
