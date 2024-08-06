@@ -47,7 +47,7 @@ class PostControllerTest {
 
     @BeforeEach
     void createUserAndSignIn() throws Exception {
-        String testEmail = "gunhong951@gmail.com";
+        String testEmail = "gunhong953@gmail.com";
         String testPassword = "123456";
         String username = "testName";
         UserRecord user = createFirebaseUserAccount(testEmail, testPassword, username);
@@ -135,9 +135,14 @@ class PostControllerTest {
 
         Thread thread1 = new Thread(task);
         Thread thread2 = new Thread(task);
+        Thread thread3 = new Thread(task);
+        Thread thread4 = new Thread(task);
+
 
         thread1.start();
         thread2.start();
+        thread3.start();
+        thread4.start();
 
         latch.await();
     }

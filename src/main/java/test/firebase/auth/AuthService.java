@@ -8,6 +8,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import test.firebase.member.Member;
 import test.firebase.member.MemberRepository;
@@ -25,8 +26,8 @@ public class AuthService {
             retryFor = {DataIntegrityViolationException.class},
             backoff = @Backoff(delay = 1000)
     )
-    @Transactional
-    public Member joinAndLogin(FirebaseToken decodedToken) {
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public synchronized Member joinAndLogin(FirebaseToken decodedToken) {
         String uid = decodedToken.getUid();
         Optional<Member> memberOptional = memberRepository.findByUid(uid);
         if (memberOptional.isPresent()) {
